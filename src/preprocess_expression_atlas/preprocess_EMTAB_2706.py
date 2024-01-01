@@ -2,10 +2,10 @@
 # coding: utf-8
 
 """
-create count matrix of E-MTAB-2706 data
+preprocess FANTOM data
 """
   
-import sys  
+import sys
 import xml.etree.ElementTree as ET
 import pandas as pd
 
@@ -13,7 +13,8 @@ if __name__ == "__main__":
 
     xml_path = sys.argv[1]
     count_path = sys.argv[2]
-    output_path = sys.argv[3]
+    ncbi_path = sys.argv[3]
+    output_path = sys.argv[4]
     tree = ET.parse(xml_path)
     root = tree.getroot()
 
@@ -41,14 +42,30 @@ if __name__ == "__main__":
             else:
                 count_matrix.append(line.splitlines()[0].split('\t'))
 
-# convert to pandas dataframe
+# convert count matrix to pandas dataframe
     count_matrix_df = pd.DataFrame(count_matrix[1:],columns=count_matrix[0])
+
+# import GeneIDs, Gene Symbols and Ensembl GeneIDs from ncbi database
+    geneids = []
+    with open(ncbi_path, 'r') as ncbi_db:
+        for line in ncbi_db:
+            if line[0] != '#':
+                geneids.append([line.split('\t')[0],line.split('\t')[1],line.split('\t')[3]])
+
+# convert ncbi data to pandas dataframe
+    gene_df = pd.DataFrame(geneids,columns=['GeneID','GeneSymbol','Gene'])
+
+# merge dataframes
+    merged_df = pd.merge(gene_df,count_matrix_df, on='Gene', how='outer')
+
+# remove rows with NA in any column
+    count_matrix_df = merged_df.dropna()
 
 # import list of cell lines (hardwired but needs to be imported from a file)
     cell_lines = ['HeLa','RAMOS','Jurkat','MCF-7','HepG2','K-562','A549','A-431']
 
 # filter dataframe
-    filtered_df = count_matrix_df[['Gene'] + cell_lines]
+    filtered_df = count_matrix_df[['Gene','GeneID','GeneSymbol'] + cell_lines]
 
 # convert to list
     filtered_df.to_csv(output_path, sep='\t', index=False)
