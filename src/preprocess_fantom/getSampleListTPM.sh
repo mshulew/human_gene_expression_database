@@ -10,6 +10,6 @@ while read line; do
 		echo $line | awk -F 'tpm.' '{print $2}' | awk -F ']=' -v var="$a" '{print var,"\t",$1}' | 
 			sed "s/%2b/+/g" | sed "s/%2c/,/g" | sed "s/%2e/./g" | sed "s/%2f/_/g" |
 		        sed "s/%3a/:/g" | sed "s/%5e/Z/g" |	
-			sed "s/%20/v/g" | sed "s/%27/'/g" | sed "s/%28/(/g" | sed "s/%29/)/g"
+			sed "s/%20/ /g" | sed "s/%27/'/g" | sed "s/%28/(/g" | sed "s/%29/)/g"
 	fi
 done <$1
