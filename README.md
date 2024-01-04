@@ -22,17 +22,18 @@ pip -m install .
 ## Script description and usage
 - ### src/scrape_ncbi_gene.py
   Python script for scraping https://www.ncbi.nlm.nih.gov/gene/.  
-   Input file: List of GeneIDs. Can has multiple columns as long as the GeneID is in column 1  
+   Input file: List of NCBI GeneIDs. Can have multiple columns as long as the NCBI GeneID is in column 1  
   Output file: tsv files containing:  
   
   Column | Description
   -------|--------------------
-  1      | GeneID
+  1      | NCBI GeneID
   2      | Gene Symbol
   3      | Gene Name
-  4      | Synonyms (if included in entry)
-  5      | Summary
-  6      | Expression (if included in entry)
+  4      | Ensembl GeneID
+  5      | Synonyms (if included in entry)
+  6      | Summary
+  7      | Expression (if included in entry)
 
   Usage
   ```bash
